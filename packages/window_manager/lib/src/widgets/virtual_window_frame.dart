@@ -2,10 +2,10 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:window_manager_clone/src/resize_edge.dart';
-import 'package:window_manager_clone/src/widgets/drag_to_resize_area.dart';
-import 'package:window_manager_clone/src/window_listener.dart';
-import 'package:window_manager_clone/src/window_manager_clone.dart';
+import 'package:window_manager_clone_clone/src/resize_edge.dart';
+import 'package:window_manager_clone_clone/src/widgets/drag_to_resize_area.dart';
+import 'package:window_manager_clone_clone/src/window_listener.dart';
+import 'package:window_manager_clone_clone/src/window_manager_clone.dart';
 
 final _kIsLinux = !kIsWeb && Platform.isLinux;
 final _kIsWindows = !kIsWeb && Platform.isWindows;

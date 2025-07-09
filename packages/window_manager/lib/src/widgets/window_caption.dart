@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-import 'package:window_manager_clone/src/widgets/drag_to_move_area.dart';
-import 'package:window_manager_clone/src/widgets/window_caption_button.dart';
-import 'package:window_manager_clone/src/window_listener.dart';
-import 'package:window_manager_clone/src/window_manager_clone.dart';
+import 'package:window_manager_clone_clone/src/widgets/drag_to_move_area.dart';
+import 'package:window_manager_clone_clone/src/widgets/window_caption_button.dart';
+import 'package:window_manager_clone_clone/src/window_listener.dart';
+import 'package:window_manager_clone_clone/src/window_manager_clone.dart';
 
 const double kWindowCaptionHeight = 32;
 

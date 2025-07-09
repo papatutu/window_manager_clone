@@ -1,6 +1,6 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-// import 'package:window_manager_clone/window_manager_clone.dart';
+// import 'package:window_manager_clone_clone/window_manager_clone.dart';
 
 void main() {
   const MethodChannel channel = MethodChannel('window_manager_clone');
