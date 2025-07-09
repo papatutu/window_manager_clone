@@ -1,5 +1,5 @@
-#ifndef FLUTTER_PLUGIN_WINDOW_MANAGER_PLUGIN_H_
-#define FLUTTER_PLUGIN_WINDOW_MANAGER_PLUGIN_H_
+#ifndef FLUTTER_PLUGIN_window_manager_clone_PLUGIN_H_
+#define FLUTTER_PLUGIN_window_manager_clone_PLUGIN_H_
 
 #include <flutter_linux/flutter_linux.h>
 
@@ -16,11 +16,11 @@ typedef struct {
   GObjectClass parent_class;
 } WindowManagerPluginClass;
 
-FLUTTER_PLUGIN_EXPORT GType window_manager_plugin_get_type();
+FLUTTER_PLUGIN_EXPORT GType window_manager_clone_plugin_get_type();
 
-FLUTTER_PLUGIN_EXPORT void window_manager_plugin_register_with_registrar(
+FLUTTER_PLUGIN_EXPORT void window_manager_clone_plugin_register_with_registrar(
     FlPluginRegistrar* registrar);
 
 G_END_DECLS
 
-#endif  // FLUTTER_PLUGIN_WINDOW_MANAGER_PLUGIN_H_
+#endif  // FLUTTER_PLUGIN_window_manager_clone_PLUGIN_H_

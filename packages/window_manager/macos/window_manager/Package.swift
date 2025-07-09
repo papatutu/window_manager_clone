@@ -4,17 +4,17 @@
 import PackageDescription
 
 let package = Package(
-    name: "window_manager",
+    name: "window_manager_clone",
     platforms: [
         .macOS("10.15")
     ],
     products: [
-        .library(name: "window-manager", targets: ["window_manager"])
+        .library(name: "window-manager", targets: ["window_manager_clone"])
     ],
     dependencies: [],
     targets: [
         .target(
-            name: "window_manager",
+            name: "window_manager_clone",
             dependencies: [],
             resources: [
                 // If your plugin requires a privacy manifest, for example if it collects user

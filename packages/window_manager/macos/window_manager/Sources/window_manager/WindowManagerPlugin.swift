@@ -3,7 +3,7 @@ import FlutterMacOS
 
 public class WindowManagerPlugin: NSObject, FlutterPlugin {
     public static func register(with registrar: FlutterPluginRegistrar) {
-        let channel = FlutterMethodChannel(name: "window_manager", binaryMessenger: registrar.messenger)
+        let channel = FlutterMethodChannel(name: "window_manager_clone", binaryMessenger: registrar.messenger)
         let instance = WindowManagerPlugin(registrar, channel)
         registrar.addMethodCallDelegate(instance, channel: channel)
     }

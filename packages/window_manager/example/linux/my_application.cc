@@ -31,7 +31,7 @@ static void my_application_activate(GApplication* application) {
 #ifdef GDK_WINDOWING_X11
   GdkScreen *screen = gtk_window_get_screen(window);
   if (GDK_IS_X11_SCREEN(screen)) {
-     const gchar* wm_name = gdk_x11_screen_get_window_manager_name(screen);
+     const gchar* wm_name = gdk_x11_screen_get_window_manager_clone_name(screen);
      if (g_strcmp0(wm_name, "GNOME Shell") != 0) {
        use_header_bar = FALSE;
      }
@@ -40,12 +40,12 @@ static void my_application_activate(GApplication* application) {
   if (use_header_bar) {
     GtkHeaderBar *header_bar = GTK_HEADER_BAR(gtk_header_bar_new());
     gtk_widget_show(GTK_WIDGET(header_bar));
-    gtk_header_bar_set_title(header_bar, "window_manager_example");
+    gtk_header_bar_set_title(header_bar, "window_manager_clone_example");
     gtk_header_bar_set_show_close_button(header_bar, TRUE);
     gtk_window_set_titlebar(window, GTK_WIDGET(header_bar));
   }
   else {
-    gtk_window_set_title(window, "window_manager_example");
+    gtk_window_set_title(window, "window_manager_clone_example");
   }
 
   gtk_window_set_default_size(window, 1280, 720);

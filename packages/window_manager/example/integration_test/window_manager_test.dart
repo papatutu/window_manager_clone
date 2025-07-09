@@ -3,7 +3,7 @@ import 'dart:ui';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
-import 'package:window_manager/window_manager.dart';
+import 'package:window_manager_clone/window_manager_clone.dart';
 
 Future<void> main() async {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
@@ -11,7 +11,7 @@ Future<void> main() async {
   await windowManager.waitUntilReadyToShow(
     const WindowOptions(
       size: Size(640, 480),
-      title: 'window_manager_test',
+      title: 'window_manager_clone_test',
     ),
     () async {
       await windowManager.show();
@@ -115,7 +115,7 @@ Future<void> main() async {
   );
 
   testWidgets('getTitle', (tester) async {
-    expect(await windowManager.getTitle(), 'window_manager_test');
+    expect(await windowManager.getTitle(), 'window_manager_clone_test');
   });
 
   testWidgets('getTitleBarHeight', (tester) async {

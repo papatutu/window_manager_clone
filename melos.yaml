@@ -1,4 +1,4 @@
-name: window_manager_workspace
+name: window_manager_clone_workspace
 repository: https://github.com/leanflutter/window_manager
 
 packages:

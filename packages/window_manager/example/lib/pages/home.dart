@@ -7,8 +7,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:preference_list/preference_list.dart';
 import 'package:tray_manager/tray_manager.dart';
-import 'package:window_manager/window_manager.dart';
-import 'package:window_manager_example/utils/config.dart';
+import 'package:window_manager_clone/window_manager_clone.dart';
+import 'package:window_manager_clone_example/utils/config.dart';
 
 const _kSizes = [
   Size(400, 400),
@@ -700,7 +700,7 @@ class _HomePageState extends State<HomePage> with TrayListener, WindowListener {
                   text: title.toString(),
                 );
                 title =
-                    'window_manager_example - ${DateTime.now().millisecondsSinceEpoch}';
+                    'window_manager_clone_example - ${DateTime.now().millisecondsSinceEpoch}';
                 await windowManager.setTitle(title);
               },
             ),
@@ -944,7 +944,7 @@ class _HomePageState extends State<HomePage> with TrayListener, WindowListener {
                     preferredSize: const Size.fromHeight(kWindowCaptionHeight),
                     child: WindowCaption(
                       brightness: Theme.of(context).brightness,
-                      title: const Text('window_manager_example'),
+                      title: const Text('window_manager_clone_example'),
                     ),
                   ),
             body: Column(

@@ -1,5 +1,5 @@
-name: window_manager_example
-description: Demonstrates how to use the window_manager plugin.
+name: window_manager_clone_example
+description: Demonstrates how to use the window_manager_clone plugin.
 publish_to: "none"
 
 environment:
@@ -12,7 +12,7 @@ dependencies:
     sdk: flutter
   preference_list: ^0.0.2
   tray_manager: ^0.2.3
-  window_manager:
+  window_manager_clone:
     path: ../
 
 dev_dependencies:

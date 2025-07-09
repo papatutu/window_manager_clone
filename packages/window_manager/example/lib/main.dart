@@ -1,8 +1,8 @@
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
-import 'package:window_manager/window_manager.dart';
-import 'package:window_manager_example/pages/home.dart';
-import 'package:window_manager_example/utils/config.dart';
+import 'package:window_manager_clone/window_manager_clone.dart';
+import 'package:window_manager_clone_example/pages/home.dart';
+import 'package:window_manager_clone_example/utils/config.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

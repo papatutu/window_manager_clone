@@ -1,4 +1,4 @@
-#include "include/window_manager/window_manager_plugin.h"
+#include "include/window_manager_clone/window_manager_clone_plugin.h"
 
 // This must be included before many other Windows headers.
 #include <windows.h>
@@ -12,7 +12,7 @@
 #include <memory>
 #include <sstream>
 
-#include "window_manager.cpp"
+#include "window_manager_clone.cpp"
 
 namespace {
 
@@ -45,7 +45,7 @@ class WindowManagerPlugin : public flutter::Plugin {
       std::default_delete<flutter::MethodChannel<flutter::EncodableValue>>>
       channel = nullptr;
 
-  WindowManager* window_manager;
+  WindowManager* window_manager_clone;
   flutter::PluginRegistrarWindows* registrar;
 
   // The ID of the WindowProc delegate registration.
@@ -70,7 +70,7 @@ class WindowManagerPlugin : public flutter::Plugin {
     // Don't use `MonitorFromWindow(hwnd, MONITOR_DEFAULTTONEAREST)` above.
     // Because if the window is restored from minimized state, the window is not
     // in the correct monitor. The monitor is always the left-most monitor.
-    // https://github.com/leanflutter/window_manager/issues/489
+    // https://github.com/leanflutter/window_manager_clone/issues/489
     HMONITOR monitor = MonitorFromRect(&sz->rgrc[0], MONITOR_DEFAULTTONEAREST);
     if (monitor != NULL) {
       MONITORINFO monitorInfo;
@@ -103,13 +103,13 @@ void WindowManagerPlugin::RegisterWithRegistrar(
 WindowManagerPlugin::WindowManagerPlugin(
     flutter::PluginRegistrarWindows* registrar)
     : registrar(registrar) {
-  window_manager = new WindowManager();
+  window_manager_clone = new WindowManager();
   window_proc_id = registrar->RegisterTopLevelWindowProcDelegate(
       [this](HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
         return HandleWindowProc(hWnd, message, wParam, lParam);
       });
   channel = std::make_unique<flutter::MethodChannel<flutter::EncodableValue>>(
-      registrar->messenger(), "window_manager",
+      registrar->messenger(), "window_manager_clone",
       &flutter::StandardMethodCodec::GetInstance());
 
   channel->SetMethodCallHandler([this](const auto& call, auto result) {
@@ -139,31 +139,31 @@ std::optional<LRESULT> WindowManagerPlugin::HandleWindowProc(HWND hWnd,
   std::optional<LRESULT> result = std::nullopt;
 
   if (message == WM_DPICHANGED) {
-    window_manager->pixel_ratio_ =
+    window_manager_clone->pixel_ratio_ =
         (float)LOWORD(wParam) / USER_DEFAULT_SCREEN_DPI;
-    window_manager->ForceChildRefresh();
+    window_manager_clone->ForceChildRefresh();
   }
 
   if (wParam && message == WM_NCCALCSIZE) {
-    if (window_manager->IsFullScreen() &&
-        window_manager->title_bar_style_ != "normal") {
-      if (window_manager->is_frameless_) {
+    if (window_manager_clone->IsFullScreen() &&
+        window_manager_clone->title_bar_style_ != "normal") {
+      if (window_manager_clone->is_frameless_) {
         adjustNCCALCSIZE(hWnd, reinterpret_cast<NCCALCSIZE_PARAMS*>(lParam));
       }
       return 0;
     }
     // This must always be before handling title_bar_style_ == "hidden" so
     // the `if TitleBarStyle.hidden` doesn't get executed.
-    if (window_manager->is_frameless_) {
-      if (window_manager->IsMaximized()) {
+    if (window_manager_clone->is_frameless_) {
+      if (window_manager_clone->IsMaximized()) {
         adjustNCCALCSIZE(hWnd, reinterpret_cast<NCCALCSIZE_PARAMS*>(lParam));
       }
       return 0;
     }
 
     // This must always be last.
-    if (wParam && window_manager->title_bar_style_ == "hidden") {
-      if (window_manager->IsMaximized()) {
+    if (wParam && window_manager_clone->title_bar_style_ == "hidden") {
+      if (window_manager_clone->IsMaximized()) {
         // Adjust the borders when maximized so the app isn't cut off
         adjustNCCALCSIZE(hWnd, reinterpret_cast<NCCALCSIZE_PARAMS*>(lParam));
       } else {
@@ -172,7 +172,7 @@ std::optional<LRESULT> WindowManagerPlugin::HandleWindowProc(HWND hWnd,
         // of the app and I've yet to find a way to remove that.
         sz->rgrc[0].top += IsWindows11OrGreater() ? 0 : 1;
         // The following lines are required for resizing the window.
-        // https://github.com/leanflutter/window_manager/issues/483
+        // https://github.com/leanflutter/window_manager_clone/issues/483
         sz->rgrc[0].right -= 8;
         sz->rgrc[0].bottom -= 8;
         sz->rgrc[0].left -= -8;
@@ -184,24 +184,24 @@ std::optional<LRESULT> WindowManagerPlugin::HandleWindowProc(HWND hWnd,
       return 0;
     }
   } else if (message == WM_NCHITTEST) {
-    if (!window_manager->is_resizable_) {
+    if (!window_manager_clone->is_resizable_) {
       return HTNOWHERE;
     }
   } else if (message == WM_GETMINMAXINFO) {
     MINMAXINFO* info = reinterpret_cast<MINMAXINFO*>(lParam);
     // For the special "unconstrained" values, leave the defaults.
-    if (window_manager->minimum_size_.x != 0)
+    if (window_manager_clone->minimum_size_.x != 0)
       info->ptMinTrackSize.x = static_cast<LONG>(
-          window_manager->minimum_size_.x * window_manager->pixel_ratio_);
-    if (window_manager->minimum_size_.y != 0)
+          window_manager_clone->minimum_size_.x * window_manager_clone->pixel_ratio_);
+    if (window_manager_clone->minimum_size_.y != 0)
       info->ptMinTrackSize.y = static_cast<LONG>(
-          window_manager->minimum_size_.y * window_manager->pixel_ratio_);
-    if (window_manager->maximum_size_.x != -1)
+          window_manager_clone->minimum_size_.y * window_manager_clone->pixel_ratio_);
+    if (window_manager_clone->maximum_size_.x != -1)
       info->ptMaxTrackSize.x = static_cast<LONG>(
-          window_manager->maximum_size_.x * window_manager->pixel_ratio_);
-    if (window_manager->maximum_size_.y != -1)
+          window_manager_clone->maximum_size_.x * window_manager_clone->pixel_ratio_);
+    if (window_manager_clone->maximum_size_.y != -1)
       info->ptMaxTrackSize.y = static_cast<LONG>(
-          window_manager->maximum_size_.y * window_manager->pixel_ratio_);
+          window_manager_clone->maximum_size_.y * window_manager_clone->pixel_ratio_);
     result = 0;
   } else if (message == WM_NCACTIVATE) {
     if (wParam != 0) {
@@ -210,31 +210,31 @@ std::optional<LRESULT> WindowManagerPlugin::HandleWindowProc(HWND hWnd,
       _EmitEvent("blur");
     }
 
-    if (window_manager->title_bar_style_ == "hidden" ||
-        window_manager->is_frameless_)
+    if (window_manager_clone->title_bar_style_ == "hidden" ||
+        window_manager_clone->is_frameless_)
       return 1;
   } else if (message == WM_EXITSIZEMOVE) {
-    if (window_manager->is_resizing_) {
+    if (window_manager_clone->is_resizing_) {
       _EmitEvent("resized");
-      window_manager->is_resizing_ = false;
+      window_manager_clone->is_resizing_ = false;
     }
-    if (window_manager->is_moving_) {
+    if (window_manager_clone->is_moving_) {
       _EmitEvent("moved");
-      window_manager->is_moving_ = false;
+      window_manager_clone->is_moving_ = false;
     }
     return false;
   } else if (message == WM_MOVING) {
-    window_manager->is_moving_ = true;
+    window_manager_clone->is_moving_ = true;
     _EmitEvent("move");
     return false;
   } else if (message == WM_SIZING) {
-    window_manager->is_resizing_ = true;
+    window_manager_clone->is_resizing_ = true;
     _EmitEvent("resize");
 
-    if (window_manager->aspect_ratio_ > 0) {
+    if (window_manager_clone->aspect_ratio_ > 0) {
       RECT* rect = (LPRECT)lParam;
 
-      double aspect_ratio = window_manager->aspect_ratio_;
+      double aspect_ratio = window_manager_clone->aspect_ratio_;
 
       int new_width = static_cast<int>(rect->right - rect->left);
       int new_height = static_cast<int>(rect->bottom - rect->top);
@@ -289,36 +289,36 @@ std::optional<LRESULT> WindowManagerPlugin::HandleWindowProc(HWND hWnd,
       rect->bottom = bottom;
     }
   } else if (message == WM_SIZE) {
-    if (window_manager->IsFullScreen() && wParam == SIZE_MAXIMIZED &&
-        window_manager->last_state != STATE_FULLSCREEN_ENTERED) {
+    if (window_manager_clone->IsFullScreen() && wParam == SIZE_MAXIMIZED &&
+        window_manager_clone->last_state != STATE_FULLSCREEN_ENTERED) {
       _EmitEvent("enter-full-screen");
-      window_manager->last_state = STATE_FULLSCREEN_ENTERED;
-    } else if (!window_manager->IsFullScreen() && wParam == SIZE_RESTORED &&
-               window_manager->last_state == STATE_FULLSCREEN_ENTERED) {
-      window_manager->ForceChildRefresh();
+      window_manager_clone->last_state = STATE_FULLSCREEN_ENTERED;
+    } else if (!window_manager_clone->IsFullScreen() && wParam == SIZE_RESTORED &&
+               window_manager_clone->last_state == STATE_FULLSCREEN_ENTERED) {
+      window_manager_clone->ForceChildRefresh();
       _EmitEvent("leave-full-screen");
-      window_manager->last_state = STATE_NORMAL;
-    } else if (window_manager->last_state != STATE_FULLSCREEN_ENTERED) {
+      window_manager_clone->last_state = STATE_NORMAL;
+    } else if (window_manager_clone->last_state != STATE_FULLSCREEN_ENTERED) {
       if (wParam == SIZE_MAXIMIZED) {
         _EmitEvent("maximize");
-        window_manager->last_state = STATE_MAXIMIZED;
+        window_manager_clone->last_state = STATE_MAXIMIZED;
       } else if (wParam == SIZE_MINIMIZED) {
         _EmitEvent("minimize");
-        window_manager->last_state = STATE_MINIMIZED;
+        window_manager_clone->last_state = STATE_MINIMIZED;
         return 0;
       } else if (wParam == SIZE_RESTORED) {
-        if (window_manager->last_state == STATE_MAXIMIZED) {
+        if (window_manager_clone->last_state == STATE_MAXIMIZED) {
           _EmitEvent("unmaximize");
-          window_manager->last_state = STATE_NORMAL;
-        } else if (window_manager->last_state == STATE_MINIMIZED) {
+          window_manager_clone->last_state = STATE_NORMAL;
+        } else if (window_manager_clone->last_state == STATE_MINIMIZED) {
           _EmitEvent("restore");
-          window_manager->last_state = STATE_NORMAL;
+          window_manager_clone->last_state = STATE_NORMAL;
         }
       }
     }
   } else if (message == WM_CLOSE) {
     _EmitEvent("close");
-    if (window_manager->IsPreventClose()) {
+    if (window_manager_clone->IsPreventClose()) {
       return -1;
     }
   } else if (message == WM_SHOWWINDOW) {
@@ -328,11 +328,11 @@ std::optional<LRESULT> WindowManagerPlugin::HandleWindowProc(HWND hWnd,
       _EmitEvent("hide");
     }
   } else if (message == WM_WINDOWPOSCHANGED) {
-    if (window_manager->IsAlwaysOnBottom()) {
+    if (window_manager_clone->IsAlwaysOnBottom()) {
       const flutter::EncodableMap& args = {
           {flutter::EncodableValue("isAlwaysOnBottom"),
            flutter::EncodableValue(true)}};
-      window_manager->SetAlwaysOnBottom(args);
+      window_manager_clone->SetAlwaysOnBottom(args);
     }
   }
 
@@ -345,242 +345,242 @@ void WindowManagerPlugin::HandleMethodCall(
   std::string method_name = method_call.method_name();
 
   if (method_name.compare("ensureInitialized") == 0) {
-    window_manager->native_window =
+    window_manager_clone->native_window =
         ::GetAncestor(registrar->GetView()->GetNativeWindow(), GA_ROOT);
     result->Success(flutter::EncodableValue(true));
   } else if (method_name.compare("waitUntilReadyToShow") == 0) {
-    window_manager->WaitUntilReadyToShow();
+    window_manager_clone->WaitUntilReadyToShow();
     result->Success(flutter::EncodableValue(true));
   } else if (method_name.compare("getId") == 0) {
     result->Success(flutter::EncodableValue(
-        reinterpret_cast<__int64>(window_manager->GetMainWindow())));
+        reinterpret_cast<__int64>(window_manager_clone->GetMainWindow())));
   } else if (method_name.compare("setAsFrameless") == 0) {
-    window_manager->SetAsFrameless();
+    window_manager_clone->SetAsFrameless();
     result->Success(flutter::EncodableValue(true));
   } else if (method_name.compare("destroy") == 0) {
-    window_manager->Destroy();
+    window_manager_clone->Destroy();
     result->Success(flutter::EncodableValue(true));
   } else if (method_name.compare("close") == 0) {
-    window_manager->Close();
+    window_manager_clone->Close();
     result->Success(flutter::EncodableValue(true));
   } else if (method_name.compare("isPreventClose") == 0) {
-    auto value = window_manager->IsPreventClose();
+    auto value = window_manager_clone->IsPreventClose();
     result->Success(flutter::EncodableValue(value));
   } else if (method_name.compare("setPreventClose") == 0) {
     const flutter::EncodableMap& args =
         std::get<flutter::EncodableMap>(*method_call.arguments());
-    window_manager->SetPreventClose(args);
+    window_manager_clone->SetPreventClose(args);
     result->Success(flutter::EncodableValue(true));
   } else if (method_name.compare("focus") == 0) {
-    window_manager->Focus();
+    window_manager_clone->Focus();
     result->Success(flutter::EncodableValue(true));
   } else if (method_name.compare("blur") == 0) {
-    window_manager->Blur();
+    window_manager_clone->Blur();
     result->Success(flutter::EncodableValue(true));
   } else if (method_name.compare("isFocused") == 0) {
-    bool value = window_manager->IsFocused();
+    bool value = window_manager_clone->IsFocused();
     result->Success(flutter::EncodableValue(value));
   } else if (method_name.compare("show") == 0) {
-    window_manager->Show();
+    window_manager_clone->Show();
     result->Success(flutter::EncodableValue(true));
   } else if (method_name.compare("hide") == 0) {
-    window_manager->Hide();
+    window_manager_clone->Hide();
     result->Success(flutter::EncodableValue(true));
   } else if (method_name.compare("isVisible") == 0) {
-    bool value = window_manager->IsVisible();
+    bool value = window_manager_clone->IsVisible();
     result->Success(flutter::EncodableValue(value));
   } else if (method_name.compare("isMaximized") == 0) {
-    bool value = window_manager->IsMaximized();
+    bool value = window_manager_clone->IsMaximized();
     result->Success(flutter::EncodableValue(value));
   } else if (method_name.compare("maximize") == 0) {
     const flutter::EncodableMap& args =
         std::get<flutter::EncodableMap>(*method_call.arguments());
-    window_manager->Maximize(args);
+    window_manager_clone->Maximize(args);
     result->Success(flutter::EncodableValue(true));
   } else if (method_name.compare("unmaximize") == 0) {
-    window_manager->Unmaximize();
+    window_manager_clone->Unmaximize();
     result->Success(flutter::EncodableValue(true));
   } else if (method_name.compare("isMinimized") == 0) {
-    bool value = window_manager->IsMinimized();
+    bool value = window_manager_clone->IsMinimized();
     result->Success(flutter::EncodableValue(value));
   } else if (method_name.compare("minimize") == 0) {
-    window_manager->Minimize();
+    window_manager_clone->Minimize();
     result->Success(flutter::EncodableValue(true));
   } else if (method_name.compare("restore") == 0) {
-    window_manager->Restore();
+    window_manager_clone->Restore();
     result->Success(flutter::EncodableValue(true));
   } else if (method_name.compare("isDockable") == 0) {
-    bool value = window_manager->IsDockable();
+    bool value = window_manager_clone->IsDockable();
     result->Success(flutter::EncodableValue(value));
   } else if (method_name.compare("isDocked") == 0) {
-    int value = window_manager->IsDocked();
+    int value = window_manager_clone->IsDocked();
     result->Success(flutter::EncodableValue(value));
   } else if (method_name.compare("dock") == 0) {
     const flutter::EncodableMap& args =
         std::get<flutter::EncodableMap>(*method_call.arguments());
-    window_manager->Dock(args);
+    window_manager_clone->Dock(args);
     result->Success(flutter::EncodableValue(true));
   } else if (method_name.compare("undock") == 0) {
-    bool value = window_manager->Undock();
+    bool value = window_manager_clone->Undock();
     result->Success(flutter::EncodableValue(value));
   } else if (method_name.compare("isFullScreen") == 0) {
-    bool value = window_manager->IsFullScreen();
+    bool value = window_manager_clone->IsFullScreen();
     result->Success(flutter::EncodableValue(value));
   } else if (method_name.compare("setFullScreen") == 0) {
     const flutter::EncodableMap& args =
         std::get<flutter::EncodableMap>(*method_call.arguments());
-    window_manager->SetFullScreen(args);
+    window_manager_clone->SetFullScreen(args);
     result->Success(flutter::EncodableValue(true));
   } else if (method_name.compare("setAspectRatio") == 0) {
     const flutter::EncodableMap& args =
         std::get<flutter::EncodableMap>(*method_call.arguments());
-    window_manager->SetAspectRatio(args);
+    window_manager_clone->SetAspectRatio(args);
     result->Success(flutter::EncodableValue(true));
   } else if (method_name.compare("setBackgroundColor") == 0) {
     const flutter::EncodableMap& args =
         std::get<flutter::EncodableMap>(*method_call.arguments());
-    window_manager->SetBackgroundColor(args);
+    window_manager_clone->SetBackgroundColor(args);
     result->Success(flutter::EncodableValue(true));
   } else if (method_name.compare("getBounds") == 0) {
     const flutter::EncodableMap& args =
         std::get<flutter::EncodableMap>(*method_call.arguments());
-    flutter::EncodableMap value = window_manager->GetBounds(args);
+    flutter::EncodableMap value = window_manager_clone->GetBounds(args);
     result->Success(flutter::EncodableValue(value));
   } else if (method_name.compare("setBounds") == 0) {
     const flutter::EncodableMap& args =
         std::get<flutter::EncodableMap>(*method_call.arguments());
-    window_manager->SetBounds(args);
+    window_manager_clone->SetBounds(args);
     result->Success(flutter::EncodableValue(true));
   } else if (method_name.compare("setMinimumSize") == 0) {
     const flutter::EncodableMap& args =
         std::get<flutter::EncodableMap>(*method_call.arguments());
-    window_manager->SetMinimumSize(args);
+    window_manager_clone->SetMinimumSize(args);
     result->Success(flutter::EncodableValue(true));
   } else if (method_name.compare("setMaximumSize") == 0) {
     const flutter::EncodableMap& args =
         std::get<flutter::EncodableMap>(*method_call.arguments());
-    window_manager->SetMaximumSize(args);
+    window_manager_clone->SetMaximumSize(args);
     result->Success(flutter::EncodableValue(true));
   } else if (method_name.compare("isResizable") == 0) {
-    bool value = window_manager->IsResizable();
+    bool value = window_manager_clone->IsResizable();
     result->Success(flutter::EncodableValue(value));
   } else if (method_name.compare("setResizable") == 0) {
     const flutter::EncodableMap& args =
         std::get<flutter::EncodableMap>(*method_call.arguments());
-    window_manager->SetResizable(args);
+    window_manager_clone->SetResizable(args);
     result->Success(flutter::EncodableValue(true));
   } else if (method_name.compare("isMinimizable") == 0) {
-    bool value = window_manager->IsMinimizable();
+    bool value = window_manager_clone->IsMinimizable();
     result->Success(flutter::EncodableValue(value));
   } else if (method_name.compare("setMinimizable") == 0) {
     const flutter::EncodableMap& args =
         std::get<flutter::EncodableMap>(*method_call.arguments());
-    window_manager->SetMinimizable(args);
+    window_manager_clone->SetMinimizable(args);
     result->Success(flutter::EncodableValue(true));
   } else if (method_name.compare("isMaximizable") == 0) {
-    bool value = window_manager->IsMaximizable();
+    bool value = window_manager_clone->IsMaximizable();
     result->Success(flutter::EncodableValue(value));
   } else if (method_name.compare("setMaximizable") == 0) {
     const flutter::EncodableMap& args =
         std::get<flutter::EncodableMap>(*method_call.arguments());
-    window_manager->SetMaximizable(args);
+    window_manager_clone->SetMaximizable(args);
     result->Success(flutter::EncodableValue(true));
   } else if (method_name.compare("isClosable") == 0) {
-    bool value = window_manager->IsClosable();
+    bool value = window_manager_clone->IsClosable();
     result->Success(flutter::EncodableValue(value));
   } else if (method_name.compare("setClosable") == 0) {
     const flutter::EncodableMap& args =
         std::get<flutter::EncodableMap>(*method_call.arguments());
-    window_manager->SetClosable(args);
+    window_manager_clone->SetClosable(args);
     result->Success(flutter::EncodableValue(true));
   } else if (method_name.compare("isAlwaysOnTop") == 0) {
-    bool value = window_manager->IsAlwaysOnTop();
+    bool value = window_manager_clone->IsAlwaysOnTop();
     result->Success(flutter::EncodableValue(value));
   } else if (method_name.compare("setAlwaysOnTop") == 0) {
     const flutter::EncodableMap& args =
         std::get<flutter::EncodableMap>(*method_call.arguments());
-    window_manager->SetAlwaysOnTop(args);
+    window_manager_clone->SetAlwaysOnTop(args);
     result->Success(flutter::EncodableValue(true));
   } else if (method_name.compare("isAlwaysOnBottom") == 0) {
-    bool value = window_manager->IsAlwaysOnBottom();
+    bool value = window_manager_clone->IsAlwaysOnBottom();
     result->Success(flutter::EncodableValue(value));
   } else if (method_name.compare("setAlwaysOnBottom") == 0) {
     const flutter::EncodableMap& args =
         std::get<flutter::EncodableMap>(*method_call.arguments());
-    window_manager->SetAlwaysOnBottom(args);
+    window_manager_clone->SetAlwaysOnBottom(args);
     result->Success(flutter::EncodableValue(true));
   } else if (method_name.compare("getTitle") == 0) {
-    std::string value = window_manager->GetTitle();
+    std::string value = window_manager_clone->GetTitle();
     result->Success(flutter::EncodableValue(value));
   } else if (method_name.compare("setTitle") == 0) {
     const flutter::EncodableMap& args =
         std::get<flutter::EncodableMap>(*method_call.arguments());
-    window_manager->SetTitle(args);
+    window_manager_clone->SetTitle(args);
     result->Success(flutter::EncodableValue(true));
   } else if (method_name.compare("setTitleBarStyle") == 0) {
     const flutter::EncodableMap& args =
         std::get<flutter::EncodableMap>(*method_call.arguments());
-    window_manager->SetTitleBarStyle(args);
+    window_manager_clone->SetTitleBarStyle(args);
     result->Success(flutter::EncodableValue(true));
   } else if (method_name.compare("getTitleBarHeight") == 0) {
-    int value = window_manager->GetTitleBarHeight();
+    int value = window_manager_clone->GetTitleBarHeight();
     result->Success(flutter::EncodableValue(value));
   } else if (method_name.compare("isSkipTaskbar") == 0) {
-    bool value = window_manager->IsSkipTaskbar();
+    bool value = window_manager_clone->IsSkipTaskbar();
     result->Success(flutter::EncodableValue(value));
   } else if (method_name.compare("setSkipTaskbar") == 0) {
     const flutter::EncodableMap& args =
         std::get<flutter::EncodableMap>(*method_call.arguments());
-    window_manager->SetSkipTaskbar(args);
+    window_manager_clone->SetSkipTaskbar(args);
     result->Success(flutter::EncodableValue(true));
   } else if (method_name.compare("setProgressBar") == 0) {
     const flutter::EncodableMap& args =
         std::get<flutter::EncodableMap>(*method_call.arguments());
-    window_manager->SetProgressBar(args);
+    window_manager_clone->SetProgressBar(args);
     result->Success(flutter::EncodableValue(true));
   } else if (method_name.compare("setIcon") == 0) {
     const flutter::EncodableMap& args =
         std::get<flutter::EncodableMap>(*method_call.arguments());
-    window_manager->SetIcon(args);
+    window_manager_clone->SetIcon(args);
     result->Success(flutter::EncodableValue(true));
   } else if (method_name.compare("hasShadow") == 0) {
-    bool value = window_manager->HasShadow();
+    bool value = window_manager_clone->HasShadow();
     result->Success(flutter::EncodableValue(value));
   } else if (method_name.compare("setHasShadow") == 0) {
     const flutter::EncodableMap& args =
         std::get<flutter::EncodableMap>(*method_call.arguments());
-    window_manager->SetHasShadow(args);
+    window_manager_clone->SetHasShadow(args);
     result->Success(flutter::EncodableValue(true));
   } else if (method_name.compare("getOpacity") == 0) {
-    double value = window_manager->GetOpacity();
+    double value = window_manager_clone->GetOpacity();
     result->Success(flutter::EncodableValue(value));
   } else if (method_name.compare("setOpacity") == 0) {
     const flutter::EncodableMap& args =
         std::get<flutter::EncodableMap>(*method_call.arguments());
-    window_manager->SetOpacity(args);
+    window_manager_clone->SetOpacity(args);
     result->Success(flutter::EncodableValue(true));
   } else if (method_name.compare("setBrightness") == 0) {
     const flutter::EncodableMap& args =
         std::get<flutter::EncodableMap>(*method_call.arguments());
-    window_manager->SetBrightness(args);
+    window_manager_clone->SetBrightness(args);
     result->Success(flutter::EncodableValue(true));
   } else if (method_name.compare("setIgnoreMouseEvents") == 0) {
     const flutter::EncodableMap& args =
         std::get<flutter::EncodableMap>(*method_call.arguments());
-    window_manager->SetIgnoreMouseEvents(args);
+    window_manager_clone->SetIgnoreMouseEvents(args);
     result->Success(flutter::EncodableValue(true));
   } else if (method_name.compare("popUpWindowMenu") == 0) {
     const flutter::EncodableMap& args =
         std::get<flutter::EncodableMap>(*method_call.arguments());
-    window_manager->PopUpWindowMenu(args);
+    window_manager_clone->PopUpWindowMenu(args);
     result->Success(flutter::EncodableValue(true));
   } else if (method_name.compare("startDragging") == 0) {
-    window_manager->StartDragging();
+    window_manager_clone->StartDragging();
     result->Success(flutter::EncodableValue(true));
   } else if (method_name.compare("startResizing") == 0) {
     const flutter::EncodableMap& args =
         std::get<flutter::EncodableMap>(*method_call.arguments());
-    window_manager->StartResizing(args);
+    window_manager_clone->StartResizing(args);
     result->Success(flutter::EncodableValue(true));
   } else {
     result->NotImplemented();

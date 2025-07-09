@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.14)
-project(window_manager_example LANGUAGES CXX)
+project(window_manager_clone_example LANGUAGES CXX)
 
-set(BINARY_NAME "window_manager_example")
+set(BINARY_NAME "window_manager_clone_example")
 
 cmake_policy(SET CMP0063 NEW)
 

@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 3.10)
 project(runner LANGUAGES CXX)
 
-set(BINARY_NAME "window_manager_example")
-set(APPLICATION_ID "com.example.window_manager")
+set(BINARY_NAME "window_manager_clone_example")
+set(APPLICATION_ID "com.example.window_manager_clone")
 
 cmake_policy(SET CMP0063 NEW)
 
