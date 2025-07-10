@@ -4,7 +4,7 @@
 #include <gtk/gtk.h>
 
 #define WINDOW_MANAGER_PLUGIN(obj)                                     \
-  (G_TYPE_CHECK_INSTANCE_CAST((obj), window_manager_plugin_get_type(), \
+  (G_TYPE_CHECK_INSTANCE_CAST((obj), window_manager_clone_plugin_get_type(), \
                               WindowManagerPlugin))
 
 struct _WindowManagerPlugin {
@@ -26,7 +26,7 @@ struct _WindowManagerPlugin {
   GtkCssProvider* css_provider;
 };
 
-G_DEFINE_TYPE(WindowManagerPlugin, window_manager_plugin, g_object_get_type())
+G_DEFINE_TYPE(WindowManagerPlugin, window_manager_clone_plugin, g_object_get_type())
 
 // Gets the window being controlled.
 GtkWindow* get_window(WindowManagerPlugin* self) {
@@ -803,7 +803,7 @@ static FlMethodResponse* set_brightness(WindowManagerPlugin* self,
 }
 
 // Called when a method call is received from Flutter.
-static void window_manager_plugin_handle_method_call(
+static void window_manager_clone_plugin_handle_method_call(
     WindowManagerPlugin* self,
     FlMethodCall* method_call) {
   g_autoptr(FlMethodResponse) response = nullptr;
@@ -936,24 +936,24 @@ static void window_manager_plugin_handle_method_call(
   fl_method_call_respond(method_call, response, nullptr);
 }
 
-static void window_manager_plugin_dispose(GObject* object) {
+static void window_manager_clone_plugin_dispose(GObject* object) {
   WindowManagerPlugin* self = WINDOW_MANAGER_PLUGIN(object);
   g_clear_object(&self->css_provider);
   g_free(self->title_bar_style_);
-  G_OBJECT_CLASS(window_manager_plugin_parent_class)->dispose(object);
+  G_OBJECT_CLASS(window_manager_clone_plugin_parent_class)->dispose(object);
 }
 
-static void window_manager_plugin_class_init(WindowManagerPluginClass* klass) {
-  G_OBJECT_CLASS(klass)->dispose = window_manager_plugin_dispose;
+static void window_manager_clone_plugin_class_init(WindowManagerPluginClass* klass) {
+  G_OBJECT_CLASS(klass)->dispose = window_manager_clone_plugin_dispose;
 }
 
-static void window_manager_plugin_init(WindowManagerPlugin* self) {}
+static void window_manager_clone_plugin_init(WindowManagerPlugin* self) {}
 
 static void method_call_cb(FlMethodChannel* channel,
                            FlMethodCall* method_call,
                            gpointer user_data) {
   WindowManagerPlugin* plugin = WINDOW_MANAGER_PLUGIN(user_data);
-  window_manager_plugin_handle_method_call(plugin, method_call);
+  window_manager_clone_plugin_handle_method_call(plugin, method_call);
 }
 
 void _emit_event(WindowManagerPlugin* plugin, const char* event_name) {
@@ -1081,10 +1081,10 @@ gboolean on_mouse_press(GSignalInvocationHint* ihint,
   return TRUE;
 }
 
-void window_manager_plugin_register_with_registrar(
+void window_manager_clone_plugin_register_with_registrar(
     FlPluginRegistrar* registrar) {
   WindowManagerPlugin* plugin = WINDOW_MANAGER_PLUGIN(
-      g_object_new(window_manager_plugin_get_type(), nullptr));
+      g_object_new(window_manager_clone_plugin_get_type(), nullptr));
 
   plugin->registrar = FL_PLUGIN_REGISTRAR(g_object_ref(registrar));
 

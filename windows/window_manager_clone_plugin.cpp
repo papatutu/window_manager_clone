@@ -1,4 +1,4 @@
-#include "include/window_manager/window_manager_clone_plugin.h"
+#include "include/window_manager/window_manager_plugin.h"
 
 // This must be included before many other Windows headers.
 #include <windows.h>
