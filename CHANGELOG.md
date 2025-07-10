@@ -5,7 +5,7 @@
 
 ### 0.4.2
 
-* [windows] Update window_manager_plugin.cpp for fix #439 issue #486
+* [windows] Update window_manager_clone_plugin.cpp for fix #439 issue #486
 * [windows] fix: win, adjustNCCALCSIZE with monitor coords #482
 
 ### 0.4.0

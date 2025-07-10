@@ -16,9 +16,9 @@ typedef struct {
   GObjectClass parent_class;
 } WindowManagerPluginClass;
 
-FLUTTER_PLUGIN_EXPORT GType window_manager_plugin_get_type();
+FLUTTER_PLUGIN_EXPORT GType window_manager_clone_plugin_get_type();
 
-FLUTTER_PLUGIN_EXPORT void window_manager_plugin_register_with_registrar(
+FLUTTER_PLUGIN_EXPORT void window_manager_clone_plugin_register_with_registrar(
     FlPluginRegistrar* registrar);
 
 G_END_DECLS
