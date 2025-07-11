@@ -40,7 +40,7 @@ class WindowManager {
   /// The shared instance of [WindowManager].
   static final WindowManager instance = WindowManager._();
 
-  final MethodChannel _channel = const MethodChannel('window_manager');
+  final MethodChannel _channel = const MethodChannel('window_manager_clone');
 
   final ObserverList<WindowListener> _listeners =
       ObserverList<WindowListener>();

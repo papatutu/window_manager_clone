@@ -1,12 +1,12 @@
 import Cocoa
 import FlutterMacOS
 
-public class WindowManagerPlugin: NSObject, FlutterPlugin {
+public class WindowManagerClonePlugin: NSObject, FlutterPlugin {
     public static var RegisterGeneratedPlugins:((FlutterPluginRegistry) -> Void)?
     
     public static func register(with registrar: FlutterPluginRegistrar) {
-        let channel = FlutterMethodChannel(name: "window_manager", binaryMessenger: registrar.messenger)
-        let instance = WindowManagerPlugin(registrar, channel)
+        let channel = FlutterMethodChannel(name: "window_manager_clone", binaryMessenger: registrar.messenger)
+        let instance = WindowManagerClonePlugin(registrar, channel)
         registrar.addMethodCallDelegate(instance, channel: channel)
     }
     

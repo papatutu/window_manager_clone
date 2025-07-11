@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:preference_list/preference_list.dart';
 import 'package:tray_manager/tray_manager.dart';
 import 'package:window_manager_clone/window_manager.dart';
-import 'package:window_manager_clone_example/utils/config.dart';
+import 'package:window_manager_example/utilities/utilities.dart';
 
 const _kSizes = [
   Size(400, 400),
@@ -133,7 +133,6 @@ class _HomePageState extends State<HomePage> with TrayListener, WindowListener {
                       ? Brightness.light
                       : Brightness.dark,
                 );
-                setState(() {});
               },
             ),
           ],

@@ -1,19 +1,3 @@
-### 0.4.3
-
-* [windows] fix: scale ratio on dpi change (#496)
-* [windows] fix: get window monitor from minimized state (#495)
-
-### 0.4.2
-
-* [windows] Update window_manager_clone_plugin.cpp for fix #439 issue #486
-* [windows] fix: win, adjustNCCALCSIZE with monitor coords #482
-
-### 0.4.0
-
-* chore: Use custom paint icons to replace png icons (#467)
-* chore: Remove the deprecated isBezeled property (#468)
-* fix: windows, window size, fullscree & maximized (#477)
-
 ### 0.3.9
 
 * fix(windows): fix TitleBar buttons does not display correctly #415

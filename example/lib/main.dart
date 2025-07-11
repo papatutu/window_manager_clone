@@ -1,8 +1,9 @@
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:window_manager_clone/window_manager.dart';
-import 'package:window_manager_clone_example/pages/home.dart';
-import 'package:window_manager_clone_example/utils/config.dart';
+import 'package:window_manager_example/pages/home.dart';
+import 'package:window_manager_example/themes/themes.dart';
+import 'package:window_manager_example/utilities/utilities.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -58,6 +59,8 @@ class _MyAppState extends State<MyApp> {
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,
+      theme: lightThemeData,
+      darkTheme: darkThemeData,
       themeMode: _themeMode,
       builder: (context, child) {
         child = virtualWindowFrameBuilder(context, child);
